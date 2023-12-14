@@ -19,18 +19,25 @@ describe('Gameboard', () => {
     const result = gameboard.placeShip(ship, [8, 8], 'horizontal'); // Check for invalid placement
     expect(result).toBe(false);
   });
-  /*
+
   test('should correctly identify a location with a ship', () => {
     const ship = new Ship(3);
     gameboard.placeShip(ship, [0, 0], 'horizontal');
     expect(gameboard.getShipAt([0, 0])).toBe(ship);
-    expect(gameboard.getShipAt([1, 0])).toBe(ship); // Check adjacent horizontal location
+    expect(gameboard.getShipAt([0, 1])).toBe(ship); // Check adjacent horizontal location
+  });
+
+  test('should correctly identify a location with a ship', () => {
+    const ship = new Ship(3);
+    gameboard.placeShip(ship, [3, 3], 'vertical');
+    expect(gameboard.getShipAt([3, 3])).toBe(ship);
+    expect(gameboard.getShipAt([5, 3])).toBe(ship); // Check adjacent horizontal location
   });
 
   test('should correctly identify a location without a ship', () => {
     const ship = new Ship(3);
     gameboard.placeShip(ship, [0, 0], 'horizontal');
-    expect(gameboard.getShipAt([0, 1])).toBeNull(); // Check a vertical location next to the ship
+    expect(gameboard.getShipAt([1, 1])).toBeNull(); // Check a vertical location next to the ship
     expect(gameboard.getShipAt([4, 4])).toBeNull(); // Check a location far from the ship
   });
 
@@ -38,9 +45,9 @@ describe('Gameboard', () => {
     const ship = new Ship(3);
     gameboard.placeShip(ship, [0, 0], 'vertical');
     expect(gameboard.getShipAt([0, 0])).toBe(ship);
-    expect(gameboard.getShipAt([0, 1])).toBe(ship); // Check adjacent vertical location
-    expect(gameboard.getShipAt([0, 2])).toBe(ship); // Check another adjacent vertical location
-    expect(gameboard.getShipAt([1, 0])).toBeNull(); // Check a horizontal location next to the ship
+    expect(gameboard.getShipAt([1, 0])).toBe(ship); // Check adjacent vertical location
+    expect(gameboard.getShipAt([2, 0])).toBe(ship); // Check another adjacent vertical location
+    expect(gameboard.getShipAt([1, 1])).toBeNull(); // Check a horizontal location next to the ship
   });
 
   test('should not allow overlapping ship placement', () => {
@@ -80,5 +87,4 @@ describe('Gameboard', () => {
     ship1.hit();
     expect(gameboard.allShipsSunk()).toBe(true);
   });
-  */
 });
