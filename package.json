@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/bryantt23/odin-battleship#readme",
   "dependencies": {
+    "babel": "^6.23.0",
     "jest": "^29.7.0",
     "nodemon": "^3.0.2"
   }
