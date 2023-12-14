@@ -87,4 +87,21 @@ describe('Gameboard', () => {
     ship1.hit();
     expect(gameboard.allShipsSunk()).toBe(true);
   });
+
+  test('should return true if a spot has already been attacked', () => {
+    gameboard.receiveAttack([1, 1]);
+    expect(gameboard.hasBeenAttacked([1, 1])).toBe(true);
+  });
+
+  test('should return false if a spot has not been attacked', () => {
+    expect(gameboard.hasBeenAttacked([2, 2])).toBe(false);
+  });
+
+  test('should not allow placing a ship that overlaps with another ship', () => {
+    const ship1 = new Ship(3);
+    const ship2 = new Ship(4);
+    gameboard.placeShip(ship1, [0, 0], 'horizontal');
+    const result = gameboard.placeShip(ship2, [0, 1], 'horizontal');
+    expect(result).toBe(false); // Expect the second ship placement to fail due to overlap
+  });
 });
