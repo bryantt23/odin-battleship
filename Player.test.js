@@ -10,7 +10,7 @@ describe('Player', () => {
 
   test('should be able to attack enemy Gameboard', () => {
     player.attack(enemyBoard, [0, 0]);
-    expect(enemyBoard.hasReceivedAttackAt([0, 0])).toBe(true);
+    expect(enemyBoard.hasBeenAttacked([0, 0])).toBe(true);
   });
 });
 
@@ -24,6 +24,6 @@ describe('Computer Player', () => {
   test('should make random legal plays', () => {
     const move = computerPlayer.makeRandomMove();
     computerPlayer.attack(enemyBoard, move);
-    expect(enemyBoard.hasReceivedAttackAt(move)).toBe(true);
+    expect(enemyBoard.hasBeenAttacked(move)).toBe(true);
   });
 });
