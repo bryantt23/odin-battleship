@@ -28,9 +28,21 @@ class GameEngine {
     }
     this.isPlayerTurn = !this.isPlayerTurn;
   };
-  playerTurn = coordinates => {
+  getCoordinatesFromPlayer = () => {
+    //TODO get r & c from player
+    /*
+while(this.computerGameboard.hasBeenAttacked(r, c)){
+    // get r & c from player
+  }
+  return [r, c]
+*/
+  };
+  playerTurn = () => {
+    const coordinates = this.getCoordinatesFromPlayer() || [1, 1];
+    console.log('playerTurn coordinates:', coordinates); // Add this line
     this.player.attack(coordinates);
   };
+
   computerTurn = () => {
     const coordinates = this.computer.makeRandomMove();
     this.playerGameboard.receiveAttack(coordinates);
