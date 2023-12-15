@@ -9,8 +9,6 @@ jest.mock('./Gameboard', () => {
   }));
 });
 
-jest.mock('./Player');
-
 describe('GameEngine', () => {
   let gameEngine;
 
@@ -20,8 +18,13 @@ describe('GameEngine', () => {
     // Assign the mock functions to the GameEngine instance
     gameEngine.playerGameboard.allShipsSunk = jest.fn();
     gameEngine.computerGameboard.allShipsSunk = jest.fn();
+    gameEngine.playerGameboard.receiveAttack = jest.fn();
+    gameEngine.computerGameboard.receiveAttack = jest.fn();
     gameEngine.playerTurn = jest.fn();
     gameEngine.computerTurn = jest.fn();
+    // Assign mock functions to Player's methods
+    gameEngine.player.attack = jest.fn();
+    gameEngine.computer.makeRandomMove = jest.fn();
   });
 
   test('should initialize game with two gameboards', () => {
@@ -82,5 +85,26 @@ describe('GameEngine', () => {
 
     expect(gameEngine.computerGameboard.allShipsSunk).toHaveBeenCalled();
     expect(gameEngine.gameOver).toBe(true);
+  });
+
+  it('playerTurn should make an attack on the computer gameboard', () => {
+    const attackCoordinates = [1, 1];
+    gameEngine.playerTurn(attackCoordinates);
+
+    expect(gameEngine.player.attack).toHaveBeenCalledWith(attackCoordinates);
+    expect(gameEngine.computerGameboard.receiveAttack).toHaveBeenCalledWith(
+      attackCoordinates
+    );
+  });
+
+  it('computerTurn should make a random attack on the player gameboard', () => {
+    const randomMove = [2, 2];
+    gameEngine.computer.makeRandomMove.mockReturnValue(randomMove);
+    gameEngine.computerTurn();
+
+    expect(gameEngine.computer.makeRandomMove).toHaveBeenCalled();
+    expect(gameEngine.playerGameboard.receiveAttack).toHaveBeenCalledWith(
+      randomMove
+    );
   });
 });

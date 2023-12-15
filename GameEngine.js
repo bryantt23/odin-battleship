@@ -28,8 +28,13 @@ class GameEngine {
     }
     this.isPlayerTurn = !this.isPlayerTurn;
   };
-  playerTurn = () => {};
-  computerTurn = () => {};
+  playerTurn = coordinates => {
+    this.player.attack(coordinates);
+  };
+  computerTurn = () => {
+    const coordinates = this.computer.makeRandomMove();
+    this.playerGameboard.receiveAttack(coordinates);
+  };
   startGame = () => {
     while (!this.isGameOver()) {
       this.takeTurn();
