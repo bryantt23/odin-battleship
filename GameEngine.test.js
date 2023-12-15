@@ -71,5 +71,30 @@ describe('GameEngine', () => {
     expect(gameEngine.isGameOver()).toBe(true);
   });
 
+  it('should return "Player wins" when player wins', () => {
+    const gameEngine = new GameEngine();
+
+    // Set up the game to make the player win
+    gameEngine.playerGameboard.allShipsSunk = jest.fn(() => false);
+    gameEngine.computerGameboard.allShipsSunk = jest.fn(() => true);
+
+    gameEngine.startGame();
+
+    expect(gameEngine.isGameOver()).toBe(true);
+    expect(gameEngine.startGame()).toBe('Player wins');
+  });
+
+  it('should return "Computer wins" when computer wins', () => {
+    const gameEngine = new GameEngine();
+
+    // Set up the game to make the computer win
+    gameEngine.playerGameboard.allShipsSunk = jest.fn(() => true);
+    gameEngine.computerGameboard.allShipsSunk = jest.fn(() => false);
+
+    gameEngine.startGame();
+
+    expect(gameEngine.isGameOver()).toBe(true);
+    expect(gameEngine.startGame()).toBe('Computer wins');
+  });
   // Additional tests can be added as needed...
 });

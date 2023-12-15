@@ -9,15 +9,20 @@ class GameEngine {
     this.gameOver = false;
     this.player = new Player(this.computerGameboard);
     this.computer = new Player(this.playerGameboard);
+    this.winner;
   }
   isGameOver = () => {
     return this.gameOver;
   };
   takeTurn = () => {
-    if (
-      this.playerGameboard.allShipsSunk() ||
-      this.computerGameboard.allShipsSunk()
-    ) {
+    const playerLost = this.playerGameboard.allShipsSunk(),
+      computerLost = this.computerGameboard.allShipsSunk();
+    if (playerLost || computerLost) {
+      if (playerLost) {
+        this.winner = 'Computer wins';
+      } else {
+        this.winner = 'Player wins';
+      }
       this.gameOver = true;
       return;
     }
@@ -51,6 +56,7 @@ while(this.computerGameboard.hasBeenAttacked(r, c)){
     while (!this.isGameOver()) {
       this.takeTurn();
     }
+    return this.winner;
   };
 }
 
