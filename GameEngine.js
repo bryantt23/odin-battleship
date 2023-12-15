@@ -3,11 +3,38 @@ const Player = require('./Player');
 
 class GameEngine {
   constructor() {
-    this.player = new Gameboard();
-    this.computer = new Gameboard();
-    this.playerTurn = true;
-    this.isGameOver = false;
+    this.playerGameboard = new Gameboard();
+    this.computerGameboard = new Gameboard();
+    this.isPlayerTurn = true;
+    this.gameOver = false;
+    this.player = new Player(this.computerGameboard);
+    this.computer = new Player(this.playerGameboard);
   }
+  isGameOver = () => {
+    return this.gameOver;
+  };
+  takeTurn = () => {
+    if (
+      this.playerGameboard.allShipsSunk() ||
+      this.computerGameboard.allShipsSunk()
+    ) {
+      this.gameOver = true;
+      return;
+    }
+    if (this.isPlayerTurn) {
+      this.playerTurn();
+    } else {
+      this.computerTurn();
+    }
+    this.isPlayerTurn = !this.isPlayerTurn;
+  };
+  playerTurn = () => {};
+  computerTurn = () => {};
+  startGame = () => {
+    while (!this.isGameOver()) {
+      this.takeTurn();
+    }
+  };
 }
 
 module.exports = GameEngine;
