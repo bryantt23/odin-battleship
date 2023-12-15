@@ -61,8 +61,10 @@ class Gameboard {
     if (spot !== null) {
       //is a ship
       spot.hit();
+      return true;
     } else {
       this.missedAttacks.push([r, c]);
+      return false;
     }
   };
   hasBeenAttacked = ([r, c]) => {

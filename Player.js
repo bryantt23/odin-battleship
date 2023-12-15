@@ -7,7 +7,11 @@ class Player {
     this.enemyBoard = enemyBoard;
   }
   attack = coordinates => {
-    this.enemyBoard.receiveAttack(coordinates);
+    if (!this.isValidMove(coordinates)) {
+      return 'invalid move';
+    }
+    const attack = this.enemyBoard.receiveAttack(coordinates);
+    return attack ? 'hit' : 'miss';
   };
   makeRandomMove = () => {
     let r = getRandomInt(),
@@ -17,6 +21,9 @@ class Player {
       c = getRandomInt();
     }
     return [r, c];
+  };
+  isValidMove = coordinates => {
+    return !this.enemyBoard.hasBeenAttacked(coordinates);
   };
 }
 
