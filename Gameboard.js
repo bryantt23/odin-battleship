@@ -55,6 +55,32 @@ class Gameboard {
     return true;
   };
   getShipAt = ([r, c]) => this.gameboard[r][c];
+  receiveAttack = ([r, c]) => {
+    this.alreadyAttacked[r][c] = true;
+    const spot = this.gameboard[r][c];
+    if (spot !== null) {
+      //is a ship
+      spot.hit();
+    } else {
+      this.missedAttacks.push([r, c]);
+    }
+  };
+  hasBeenAttacked = ([r, c]) => {
+    return this.alreadyAttacked[r][c];
+  };
+  allShipsSunk = () => {
+    for (let i = 0; i < SIZE; i++) {
+      for (let j = 0; j < SIZE; j++) {
+        const spot = this.gameboard[i][j];
+        if (spot !== null) {
+          if (!spot.isSunk()) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  };
 }
 
 module.exports = Gameboard;
