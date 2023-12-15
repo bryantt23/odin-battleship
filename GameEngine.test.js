@@ -2,15 +2,28 @@ const GameEngine = require('./GameEngine');
 const Gameboard = require('./Gameboard');
 const Player = require('./Player');
 
-jest.mock('./Gameboard');
+jest.mock('./Gameboard', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      allShipsSunk: jest.fn()
+      // Mock other methods as necessary
+    };
+  });
+});
+
 jest.mock('./Player');
 
 describe('GameEngine', () => {
   let gameEngine;
 
   beforeEach(() => {
+    // Reset and setup mocks for each test
+    jest.resetAllMocks();
+
+    // Initialize GameEngine
     gameEngine = new GameEngine();
-    // Mocking methods to control their behavior during tests
+
+    // Mocking GameEngine's internal methods
     gameEngine.playerTurn = jest.fn();
     gameEngine.computerTurn = jest.fn();
     gameEngine.isGameOver = jest.fn();
@@ -59,18 +72,15 @@ describe('GameEngine', () => {
   });
 
   test('game continues while no player has all ships sunk', () => {
-    Gameboard.prototype.allShipsSunk
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(false)
-      .mockReturnValue(true);
+    gameEngine.playerBoard.allShipsSunk.mockReturnValue(false);
+    gameEngine.computerBoard.allShipsSunk.mockReturnValue(false);
     gameEngine.startGame();
     expect(gameEngine.isGameOver()).toBe(true);
   });
 
   test('game ends when a player has all ships sunk', () => {
-    Gameboard.prototype.allShipsSunk
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
+    gameEngine.playerBoard.allShipsSunk.mockReturnValue(false);
+    gameEngine.computerBoard.allShipsSunk.mockReturnValue(true);
     gameEngine.startGame();
     expect(gameEngine.isGameOver()).toBe(true);
   });
