@@ -3,11 +3,20 @@ function getRandomInt() {
 }
 
 class Player {
-  attack = (enemyBoard, coordinates) => {
-    enemyBoard.receiveAttack(coordinates);
+  constructor(enemyBoard) {
+    this.enemyBoard = enemyBoard;
+  }
+  attack = coordinates => {
+    this.enemyBoard.receiveAttack(coordinates);
   };
   makeRandomMove = () => {
-    return [getRandomInt(), getRandomInt()];
+    let r = getRandomInt(),
+      c = getRandomInt();
+    while (this.enemyBoard.hasBeenAttacked([r, c])) {
+      r = getRandomInt();
+      c = getRandomInt();
+    }
+    return [r, c];
   };
 }
 

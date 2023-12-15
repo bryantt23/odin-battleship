@@ -4,18 +4,18 @@ const Gameboard = require('./Gameboard');
 describe('Player', () => {
   let player, enemyBoard;
   beforeEach(() => {
-    player = new Player();
     enemyBoard = new Gameboard();
+    player = new Player(enemyBoard);
   });
 
   test('should be able to attack enemy Gameboard', () => {
-    player.attack(enemyBoard, [0, 0]);
+    player.attack([0, 0]);
     expect(enemyBoard.hasBeenAttacked([0, 0])).toBe(true);
   });
 
   test('should not attack a position that has already been attacked', () => {
-    player.attack(enemyBoard, [1, 1]);
-    player.attack(enemyBoard, [1, 1]); // Attack the same position again
+    player.attack([1, 1]);
+    player.attack([1, 1]); // Attack the same position again
     expect(enemyBoard.hasBeenAttacked([1, 1])).toBe(true);
   });
 });
@@ -23,13 +23,13 @@ describe('Player', () => {
 describe('Computer Player', () => {
   let computerPlayer, enemyBoard;
   beforeEach(() => {
-    computerPlayer = new Player('computer');
     enemyBoard = new Gameboard();
+    computerPlayer = new Player(enemyBoard);
   });
 
   test('should make random legal plays', () => {
     const move = computerPlayer.makeRandomMove();
-    computerPlayer.attack(enemyBoard, move);
+    computerPlayer.attack(move);
     expect(enemyBoard.hasBeenAttacked(move)).toBe(true);
   });
 
