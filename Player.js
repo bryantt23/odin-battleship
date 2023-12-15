@@ -13,12 +13,15 @@ class Player {
     const attack = this.enemyBoard.receiveAttack(coordinates);
     return attack ? 'hit' : 'miss';
   };
-  makeRandomMove = () => {
+  computerAttack = () => {
     let r = getRandomInt(),
       c = getRandomInt();
-    while (this.enemyBoard.hasBeenAttacked([r, c])) {
+    let curAttack = this.attack([r, c]);
+
+    while (curAttack === 'invalid move') {
       r = getRandomInt();
       c = getRandomInt();
+      curAttack = this.attack([r, c]);
     }
     return [r, c];
   };

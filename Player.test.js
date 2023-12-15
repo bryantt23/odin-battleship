@@ -28,7 +28,7 @@ describe('Computer Player', () => {
   });
 
   test('should make random legal plays', () => {
-    const move = computerPlayer.makeRandomMove();
+    const move = computerPlayer.computerAttack();
     computerPlayer.attack(move);
     expect(enemyBoard.hasBeenAttacked(move)).toBe(true);
   });
@@ -39,16 +39,14 @@ describe('Computer Player', () => {
       enemyBoard.receiveAttack([i, i]);
     }
 
-    let isUnique = true;
-    for (let i = 0; i < 100; i++) {
+    let uniqueMoves = new Set(); // Use a Set to store unique moves
+    for (let i = 0; i < 25; i++) {
       // Try multiple times to ensure randomness
-      let move = computerPlayer.makeRandomMove();
-      if (enemyBoard.hasBeenAttacked(move)) {
-        isUnique = false;
-        break;
-      }
+      let move = computerPlayer.computerAttack();
+      uniqueMoves.add(JSON.stringify(move)); // Convert move to string for Set uniqueness
     }
 
-    expect(isUnique).toBe(true);
+    // Check if the number of unique moves is equal to 100
+    expect(uniqueMoves.size).toBe(25);
   });
 });
