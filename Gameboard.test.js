@@ -88,13 +88,38 @@ describe('Gameboard', () => {
     expect(gameboard.allShipsSunk()).toBe(true);
   });
 
-  test('should return true if a spot has already been attacked', () => {
+  test('should return true for a spot that has been attacked', () => {
     gameboard.receiveAttack([1, 1]);
     expect(gameboard.hasBeenAttacked([1, 1])).toBe(true);
   });
 
-  test('should return false if a spot has not been attacked', () => {
+  test('should return false for a spot that has not been attacked', () => {
     expect(gameboard.hasBeenAttacked([2, 2])).toBe(false);
+  });
+
+  test('should return true for a spot that has been attacked and contains a ship', () => {
+    const ship = new Ship(3);
+    gameboard.placeShip(ship, [0, 0], 'horizontal');
+    gameboard.receiveAttack([0, 0]);
+    expect(gameboard.hasBeenAttacked([0, 0])).toBe(true);
+  });
+
+  test('should return false for a spot next to an attacked spot', () => {
+    gameboard.receiveAttack([2, 2]);
+    expect(gameboard.hasBeenAttacked([2, 3])).toBe(false);
+  });
+
+  test('should return true for multiple attacked spots', () => {
+    gameboard.receiveAttack([3, 3]);
+    gameboard.receiveAttack([4, 4]);
+    expect(gameboard.hasBeenAttacked([3, 3])).toBe(true);
+    expect(gameboard.hasBeenAttacked([4, 4])).toBe(true);
+  });
+
+  test('should return false for spots in a different row or column from an attacked spot', () => {
+    gameboard.receiveAttack([5, 5]);
+    expect(gameboard.hasBeenAttacked([5, 4])).toBe(false);
+    expect(gameboard.hasBeenAttacked([4, 5])).toBe(false);
   });
 
   test('should not allow placing a ship that overlaps with another ship', () => {
