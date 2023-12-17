@@ -1,0 +1,23 @@
+.gameboard {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-gap: 1px;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+.sea {
+  background-color: blue;
+}
+
+.ship {
+  background-color: grey;
+}

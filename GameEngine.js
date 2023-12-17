@@ -1,8 +1,7 @@
 const readline = require('readline');
 const Gameboard = require('./Gameboard');
 const Player = require('./Player');
-const Ship = require('./Ship');
-const SIZE = 2;
+const SIZE = 3;
 
 class GameEngine {
   constructor() {
@@ -69,10 +68,10 @@ class GameEngine {
   };
 
   startGame = () => {
-    let ship = new Ship(1);
-    this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
-    ship = new Ship(1);
-    this.playerAttackBoard.placeShip(ship, [0, 1], 'vertical');
+    this.playerDefenseBoard.randomlyPlaceShip(2);
+    this.playerDefenseBoard.randomlyPlaceShip(1);
+    this.playerAttackBoard.randomlyPlaceShip(1);
+    this.playerAttackBoard.randomlyPlaceShip(1);
   };
 }
 

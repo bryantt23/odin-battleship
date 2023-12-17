@@ -43,7 +43,6 @@ class Gameboard {
     const maxAttempts = 100; // Limit the number of attempts to avoid infinite loops
     let attempts = 0;
 
-    console.log('this', this);
     while (attempts < maxAttempts) {
       // Randomly choose orientation
       const orientation = Math.random() > 0.5 ? 'horizontal' : 'vertical';
