@@ -26,15 +26,18 @@ class GameEngine {
     return this.gameOver;
   };
 
-  playerTurn = async () => {
-    const coordinates = await this.getCoordinatesFromPlayer();
+  playerTurn = async coordinates => {
+    console.log('player turn');
     this.player.attack(coordinates);
   };
 
   computerTurn = () => {
-    console.log('computerTurn');
+    console.log('computer turn');
     const coordinates = this.computer.computerAttack();
-    this.playerDefenseBoard.receiveAttack(coordinates);
+    console.log(
+      '🚀 ~ file: GameEngine.js:37 ~ GameEngine ~ coordinates:',
+      coordinates
+    );
   };
 
   getGameState = () => {
@@ -50,22 +53,24 @@ class GameEngine {
   };
 
   playGame = async playerCoordinates => {
-    this.player.attack(playerCoordinates);
+    await this.playerTurn(playerCoordinates);
 
     if (this.isGameOver()) {
       return this.getGameState();
     }
 
     this.computerTurn();
+    this.isGameOver();
 
     return this.getGameState();
   };
 
   startGame = () => {
-    this.playerDefenseBoard.randomlyPlaceShip(2);
+    console.log('starting');
     this.playerDefenseBoard.randomlyPlaceShip(1);
-    this.playerAttackBoard.randomlyPlaceShip(2);
+    this.playerDefenseBoard.randomlyPlaceShip(2);
     this.playerAttackBoard.randomlyPlaceShip(1);
+    this.playerAttackBoard.randomlyPlaceShip(2);
   };
 }
 

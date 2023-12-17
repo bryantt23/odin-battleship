@@ -86,10 +86,13 @@ class Gameboard {
     }
     return true;
   };
+
   getShipAt = ([r, c]) => this.gameboard[r][c];
+
   receiveAttack = ([r, c]) => {
     this.alreadyAttacked[r][c] = true;
     const spot = this.gameboard[r][c];
+    console.log('🚀 ~ file: Gameboard.js:95 ~ Gameboard ~ spot:', spot);
     if (spot !== null) {
       //is a ship
       spot.hit();
@@ -99,6 +102,7 @@ class Gameboard {
       return false;
     }
   };
+
   hasBeenAttacked = ([r, c]) => {
     return this.alreadyAttacked[r][c];
   };

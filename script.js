@@ -43,10 +43,24 @@ function renderBoard(data, boardId, boardType) {
             }
           });
         }
-      } else {
-        cellElement.classList.add(cell ? 'ship' : 'sea');
-        cellElement.textContent = cell ? 'SHIP' : 'SEA';
+      } else if (boardType === 'playerDefenseBoard') {
+        const isMiss = missedAttacks.some(
+          miss => miss[0] === rowIndex && miss[1] === colIndex
+        );
+        const isHit = alreadyAttacked[rowIndex][colIndex] && cell !== null;
+
+        if (isHit) {
+          cellElement.classList.add('hit');
+          cellElement.textContent = 'HIT';
+        } else if (isMiss) {
+          cellElement.classList.add('miss');
+          cellElement.textContent = 'MISS';
+        } else {
+          cellElement.classList.add(cell ? 'ship' : 'sea');
+          cellElement.textContent = cell ? 'SHIP' : 'SEA';
+        }
       }
+
       boardElement.appendChild(cellElement);
     });
   });

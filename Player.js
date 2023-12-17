@@ -24,8 +24,12 @@ class Player {
       c = getRandomInt(this.boardSize);
       curAttack = this.attack([r, c]);
     }
+    console.log(
+      `Computer attacked coordinates: [${r}, ${c}] - Result: ${curAttack}`
+    );
     return [r, c];
   };
+
   isValidMove = coordinates => {
     return !this.enemyBoard.hasBeenAttacked(coordinates);
   };
