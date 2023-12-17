@@ -1,10 +1,11 @@
-function getRandomInt() {
-  return Math.floor(Math.random() * 10); // 10 is the range (0-9)
+function getRandomInt(boardSize) {
+  return Math.floor(Math.random() * boardSize); // 10 is the range (0-9)
 }
 
 class Player {
-  constructor(enemyBoard) {
+  constructor(enemyBoard, boardSize) {
     this.enemyBoard = enemyBoard;
+    this.boardSize = boardSize; // Store the board size
   }
   attack = coordinates => {
     if (!this.isValidMove(coordinates)) {
@@ -14,13 +15,13 @@ class Player {
     return attack ? 'hit' : 'miss';
   };
   computerAttack = () => {
-    let r = getRandomInt(),
-      c = getRandomInt();
+    let r = getRandomInt(this.boardSize),
+      c = getRandomInt(this.boardSize);
     let curAttack = this.attack([r, c]);
 
     while (curAttack === 'invalid move') {
-      r = getRandomInt();
-      c = getRandomInt();
+      r = getRandomInt(this.boardSize);
+      c = getRandomInt(this.boardSize);
       curAttack = this.attack([r, c]);
     }
     return [r, c];
