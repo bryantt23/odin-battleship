@@ -58,9 +58,7 @@ class GameEngine {
 
     this.computerTurn();
 
-    if (this.isGameOver()) {
-      return this.getGameState();
-    }
+    return this.getGameState();
   };
 
   startGame = () => {

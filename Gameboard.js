@@ -112,8 +112,8 @@ class Gameboard {
           }
         }
       }
-      return true;
     }
+    return true;
   };
   gameboardState = () => {
     return this.gameboard;

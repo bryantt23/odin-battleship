@@ -52,14 +52,20 @@ function renderBoard(data, boardId, boardType) {
   });
 }
 
-function sendAttack(coordinates) {
-  return fetch('http://localhost:3000/game-state', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ coordinates })
-  })
-    .then(response => response.json())
-    .catch(error => console.error('Error updating game state:', error));
+async function sendAttack(coordinates) {
+  try {
+    const response = await fetch('http://localhost:3000/game-state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coordinates })
+    });
+
+    const gameState = await response.json();
+    console.log('🚀 ~ file: script.js:66 ~ sendAttack ~ gameState:', gameState);
+    return gameState;
+  } catch (error) {
+    console.error('Error updating game state:', error);
+  }
 }
 
 async function startGame() {
@@ -69,6 +75,7 @@ async function startGame() {
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await res.json();
+    console.log('🚀 ~ file: script.js:78 ~ startGame ~ data:', data);
     renderBoard(data, 'playerDefenseBoard', 'playerDefenseBoard');
     renderBoard(data, 'playerAttackBoard', 'playerAttackBoard');
     renderCheatBoard(data);
