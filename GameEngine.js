@@ -50,10 +50,6 @@ class GameEngine {
   };
 
   playGame = async playerCoordinates => {
-    console.log(
-      '🚀 ~ file: GameEngine.js:64 ~ GameEngine ~ playerCoordinates:',
-      playerCoordinates
-    );
     this.player.attack(playerCoordinates);
 
     if (this.isGameOver()) {

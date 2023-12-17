@@ -2,12 +2,82 @@ const attackButton = document.querySelector('#attackButton'),
   coordinatesElement = document.querySelector('#coordinates');
 
 function getUserInputCoordinates() {
-  return coordinatesElement.value.split(',').map(function (num) {
-    return parseInt(num.trim(), 10);
+  return coordinatesElement.value
+    .split(',')
+    .map(num => parseInt(num.trim(), 10));
+}
+
+function renderBoard(data, boardId, boardType) {
+  const boardElement = document.getElementById(boardId);
+  boardElement.innerHTML = '';
+  const { gameboard, alreadyAttacked, missedAttacks } = data.allData[boardType];
+
+  gameboard.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const cellElement = document.createElement('div');
+      cellElement.classList.add('cell');
+
+      if (boardType === 'playerAttackBoard') {
+        if (alreadyAttacked[rowIndex][colIndex]) {
+          const isMiss = missedAttacks.some(
+            miss => miss[0] === rowIndex && miss[1] === colIndex
+          );
+          cellElement.classList.add(isMiss ? 'miss' : 'hit');
+          cellElement.textContent = isMiss ? 'MISS' : 'HIT';
+        } else {
+          cellElement.classList.add('sea');
+          cellElement.textContent = 'SEA';
+          cellElement.addEventListener('click', async () => {
+            const updatedGameState = await sendAttack([rowIndex, colIndex]);
+            if (updatedGameState) {
+              renderBoard(
+                updatedGameState,
+                'playerAttackBoard',
+                'playerAttackBoard'
+              );
+              renderBoard(
+                updatedGameState,
+                'playerDefenseBoard',
+                'playerDefenseBoard'
+              );
+            }
+          });
+        }
+      } else {
+        cellElement.classList.add(cell ? 'ship' : 'sea');
+        cellElement.textContent = cell ? 'SHIP' : 'SEA';
+      }
+      boardElement.appendChild(cellElement);
+    });
   });
 }
 
-function renderBoard2(data) {
+function sendAttack(coordinates) {
+  return fetch('http://localhost:3000/game-state', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ coordinates })
+  })
+    .then(response => response.json())
+    .catch(error => console.error('Error updating game state:', error));
+}
+
+async function startGame() {
+  try {
+    const res = await fetch('http://localhost:3000/start-game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    renderBoard(data, 'playerDefenseBoard', 'playerDefenseBoard');
+    renderBoard(data, 'playerAttackBoard', 'playerAttackBoard');
+    renderCheatBoard(data);
+  } catch (error) {
+    console.error('Error starting the game:', error);
+  }
+}
+
+function renderCheatBoard(data) {
   const boardElement = document.getElementById('computerCheatBoard');
   const { gameboard } = data.allData.playerAttackBoard;
   gameboard.forEach(row => {
@@ -27,82 +97,13 @@ function renderBoard2(data) {
   });
 }
 
-function renderBoard(data) {
-  const boardElement = document.getElementById('playerDefenseBoard');
-  const { gameboard } = data.allData.playerDefenseBoard;
-  gameboard.forEach(row => {
-    row.forEach(cell => {
-      const cellElement = document.createElement('div');
-      cellElement.classList.add('cell');
-      if (cell) {
-        cellElement.classList.add('ship');
-        cellElement.textContent = 'Ship';
-      } else {
-        cellElement.classList.add('sea');
-        cellElement.textContent = 'Sea';
-      }
-      cellElement.classList.add('cell');
-      boardElement.appendChild(cellElement);
-    });
-  });
-}
-
 attackButton.addEventListener('click', async () => {
-  const playerCoordinates = getUserInputCoordinates(); // Implement this function to get user input
-  const gameState = await sendAttack(playerCoordinates);
-  console.log(
-    '🚀 ~ file: script.js:15 ~ attackButton.addEventListener ~ gameState:',
-    gameState
-  );
-  //   updateUi(gameState);
+  const playerCoordinates = getUserInputCoordinates();
+  const updatedGameState = await sendAttack(playerCoordinates);
+  if (updatedGameState) {
+    renderBoard(updatedGameState, 'playerAttackBoard', 'playerAttackBoard');
+    renderBoard(updatedGameState, 'playerDefenseBoard', 'playerDefenseBoard');
+  }
 });
-
-function sendAttack(coordinates) {
-  console.log(
-    '🚀 ~ file: script.js:21 ~ sendAttack ~ coordinates:',
-    coordinates
-  );
-  fetch('http://localhost:3000/game-state', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ coordinates })
-  })
-    .then(response => response.json())
-    .then(gameState => {
-      console.log('Game State:', gameState);
-      // Update your UI based on the received game state
-      return gameState;
-    })
-    .catch(error => console.error('Error updating game state:', error));
-}
-
-async function startGame() {
-  try {
-    const res = await fetch('http://localhost:3000/start-game', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const data = await res.json();
-    renderBoard(data);
-    renderBoard2(data);
-    console.log('🚀 ~ file: script.js:46 ~ startGame ~ data:', data);
-  } catch (error) {
-    console.error('Error starting the game:', error);
-  }
-}
-
-// Function to update the UI based on the game state
-function updateUI(gameState) {
-  console.log('🚀 ~ file: script.js:13 ~ updateUI ~ gameState:', gameState);
-  // Update the board, show messages, etc.
-  if (gameState.gameOver) {
-    alert(gameState.winner);
-  }
-  // More UI updates here...
-}
 
 setTimeout(startGame, 1000);
