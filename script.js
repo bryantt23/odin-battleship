@@ -63,4 +63,4 @@ function updateUI(gameState) {
   // More UI updates here...
 }
 
-startGame();
+setTimeout(startGame, 1000);

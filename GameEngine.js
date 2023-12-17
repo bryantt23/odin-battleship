@@ -13,17 +13,16 @@ class GameEngine {
     this.computer = new Player(this.playerDefenseBoard);
     this.winner;
   }
+
   isGameOver = () => {
     const computerWins = this.playerDefenseBoard.allShipsSunk(),
       playerWins = this.playerAttackBoard.allShipsSunk();
-    if (playerWins || computerWins) {
-      if (playerWins) {
-        this.winner = 'Player wins';
-      } else {
-        this.winner = 'Computer wins';
-      }
-      this.gameOver = true;
+
+    this.gameOver = playerWins || computerWins;
+    if (this.gameOver) {
+      this.winner = playerWins ? 'Player wins' : 'Computer wins';
     }
+
     return this.gameOver;
   };
 
@@ -48,50 +47,31 @@ class GameEngine {
     this.playerDefenseBoard.receiveAttack(coordinates);
   };
 
-  playGame = async playerCoordinates => {
-    return new Promise((resolve, reject) => {
-      this.player.attack(playerCoordinates);
-      if (this.isGameOver()) {
-        resolve({
-          gameOver: true,
-          winner: this.winner,
-          playerBoard: this.playerDefenseBoard.gameboardState(),
-
-          computerBoard: this.playerAttackBoard.gameboardState(),
-          playerDefenseBoardMissedAttacks:
-            this.playerDefenseBoard.missedAttacks,
-          playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
-          allData: this
-        });
-      }
-
-      this.computerTurn();
-      if (this.isGameOver()) {
-        resolve({
-          gameOver: true,
-          winner: this.winner,
-          playerBoard: this.playerDefenseBoard.gameboardState(),
-          computerBoard: this.playerAttackBoard.gameboardState(),
-          playerDefenseBoardMissedAttacks:
-            this.playerDefenseBoard.missedAttacks,
-          playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
-          allData: this
-        });
-      }
-
-      resolve({
-        gameOver: false,
-        winner: this.winner,
-        playerBoard: this.playerDefenseBoard.gameboardState(),
-        computerBoard: this.playerAttackBoard.gameboardState(),
-        playerDefenseBoardMissedAttacks: this.playerDefenseBoard.missedAttacks,
-        playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
-        allData: this
-      });
-    });
+  getGameState = () => {
+    return {
+      gameOver: this.gameOver,
+      winner: this.winner,
+      playerBoard: this.playerDefenseBoard.gameboardState(),
+      computerBoard: this.playerAttackBoard.gameboardState(),
+      playerDefenseBoardMissedAttacks: this.playerDefenseBoard.missedAttacks,
+      playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
+      allData: this
+    };
   };
 
-  startGame = async () => {
+  playGame = async playerCoordinates => {
+    this.player.attack(playerCoordinates);
+    if (this.isGameOver()) {
+      return this.getGameState();
+    }
+
+    this.computerTurn();
+    if (this.isGameOver()) {
+      return this.getGameState();
+    }
+  };
+
+  startGame = () => {
     console.log('start game');
     let ship = new Ship(1);
     this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
