@@ -6,7 +6,7 @@ describe('Gameboard', () => {
   const SIZE = 10;
 
   beforeEach(() => {
-    gameboard = new Gameboard();
+    gameboard = new Gameboard(SIZE);
   });
 
   test('should be able to place a ship at specific coordinates with orientation', () => {
@@ -134,16 +134,19 @@ describe('Gameboard', () => {
 
   test('gameboardState should return the correct initial state', () => {
     const initialState = gameboard.gameboardState();
-    expect(initialState).toEqual(Array(SIZE).fill(Array(SIZE).fill(null)));
+    const expectedState = Array.from({ length: SIZE }, () =>
+      Array(SIZE).fill(null)
+    );
+    expect(initialState).toEqual(expectedState);
   });
 
   test('gameboardState should reflect ship placement', () => {
     const ship = new Ship(3);
     gameboard.placeShip(ship, [0, 0], 'horizontal');
     const state = gameboard.gameboardState();
-    expect(state[0][0]).toBeInstanceOf(Ship);
-    expect(state[0][1]).toBeInstanceOf(Ship);
-    expect(state[0][2]).toBeInstanceOf(Ship);
+    expect(state[0][0]).toBe(ship);
+    expect(state[0][1]).toBe(ship);
+    expect(state[0][2]).toBe(ship);
     expect(state[0][3]).toBe(null);
   });
 
@@ -152,13 +155,12 @@ describe('Gameboard', () => {
     gameboard.placeShip(ship, [0, 0], 'horizontal');
     gameboard.receiveAttack([0, 0]);
     const state = gameboard.gameboardState();
-    expect(state[0][1]).toBeInstanceOf(Ship);
     expect(state[0][0].hits).toBe(1);
   });
 
   test('gameboardState should reflect a missed attack', () => {
     gameboard.receiveAttack([1, 1]);
     const state = gameboard.gameboardState();
-    expect(state[1][1]).toBe(null); // Assuming null is used for misses
+    expect(state[1][1]).toBe(null);
   });
 });

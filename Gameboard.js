@@ -1,6 +1,5 @@
-const SIZE = 2;
 class Gameboard {
-  constructor() {
+  constructor(SIZE) {
     const matrix = [];
     const alreadyAttackedTemp = [];
     for (let i = 0; i < SIZE; i++) {
@@ -10,12 +9,13 @@ class Gameboard {
     this.gameboard = matrix;
     this.missedAttacks = [];
     this.alreadyAttacked = alreadyAttackedTemp;
+    this.size = SIZE;
   }
 
   canPlaceShip = (r, c, shipLength, orientation) => {
     if (orientation === 'horizontal') {
       const shipEnd = c + shipLength;
-      if (shipEnd >= SIZE) {
+      if (shipEnd >= this.size) {
         return false;
       }
       for (let i = 0; i < shipLength; i++) {
@@ -25,7 +25,7 @@ class Gameboard {
       }
     } else {
       const shipEnd = r + shipLength;
-      if (shipEnd >= SIZE) {
+      if (shipEnd >= this.size) {
         return false;
       }
       for (let i = 0; i < shipLength; i++) {
@@ -71,8 +71,8 @@ class Gameboard {
     return this.alreadyAttacked[r][c];
   };
   allShipsSunk = () => {
-    for (let i = 0; i < SIZE; i++) {
-      for (let j = 0; j < SIZE; j++) {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
         const spot = this.gameboard[i][j];
         if (spot !== null) {
           if (!spot.isSunk()) {
