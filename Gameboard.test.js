@@ -3,6 +3,8 @@ const Ship = require('./Ship');
 
 describe('Gameboard', () => {
   let gameboard;
+  const SIZE = 10;
+
   beforeEach(() => {
     gameboard = new Gameboard();
   });
@@ -128,5 +130,35 @@ describe('Gameboard', () => {
     gameboard.placeShip(ship1, [0, 0], 'horizontal');
     const result = gameboard.placeShip(ship2, [0, 1], 'horizontal');
     expect(result).toBe(false); // Expect the second ship placement to fail due to overlap
+  });
+
+  test('gameboardState should return the correct initial state', () => {
+    const initialState = gameboard.gameboardState();
+    expect(initialState).toEqual(Array(SIZE).fill(Array(SIZE).fill(null)));
+  });
+
+  test('gameboardState should reflect ship placement', () => {
+    const ship = new Ship(3);
+    gameboard.placeShip(ship, [0, 0], 'horizontal');
+    const state = gameboard.gameboardState();
+    expect(state[0][0]).toBeInstanceOf(Ship);
+    expect(state[0][1]).toBeInstanceOf(Ship);
+    expect(state[0][2]).toBeInstanceOf(Ship);
+    expect(state[0][3]).toBe(null);
+  });
+
+  test('gameboardState should reflect a hit on a ship', () => {
+    const ship = new Ship(3);
+    gameboard.placeShip(ship, [0, 0], 'horizontal');
+    gameboard.receiveAttack([0, 0]);
+    const state = gameboard.gameboardState();
+    expect(state[0][1]).toBeInstanceOf(Ship);
+    expect(state[0][0].hits).toBe(1);
+  });
+
+  test('gameboardState should reflect a missed attack', () => {
+    gameboard.receiveAttack([1, 1]);
+    const state = gameboard.gameboardState();
+    expect(state[1][1]).toBe(null); // Assuming null is used for misses
   });
 });

@@ -83,6 +83,9 @@ class Gameboard {
       return true;
     }
   };
+  gameboardState = () => {
+    return this.gameboard;
+  };
 }
 
 module.exports = Gameboard;
