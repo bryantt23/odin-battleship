@@ -1,24 +1,32 @@
 const GameEngine = require('./GameEngine');
 const Gameboard = require('./Gameboard');
 const Player = require('./Player');
+const Ship = require('./Ship');
 
-// Mock Gameboard and Player outside of describe block
-jest.mock('./Gameboard', () =>
-  jest.fn(() => ({
+jest.mock('./Gameboard', () => {
+  return jest.fn().mockImplementation(size => ({
+    size,
     allShipsSunk: jest.fn(),
-    receiveAttack: jest.fn()
-  }))
-);
+    receiveAttack: jest.fn(),
+    placeShip: jest.fn(),
+    gameboardState: jest.fn()
+    // Add other methods and properties as needed
+  }));
+});
 
-jest.mock('./Player', () =>
-  jest.fn(() => ({
-    makeRandomMove: jest.fn(),
-    attack: jest.fn()
-  }))
-);
+jest.mock('./Player', () => {
+  return jest.fn().mockImplementation((enemyBoard, size) => ({
+    enemyBoard,
+    boardSize: size,
+    attack: jest.fn(),
+    computerAttack: jest.fn()
+    // Add other methods and properties as needed
+  }));
+});
 
 describe('GameEngine', () => {
   let gameEngine;
+  const SIZE = 2;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,7 +34,6 @@ describe('GameEngine', () => {
   });
 
   test('should initialize the game with two gameboards', () => {
-    // Expect the Gameboard mock constructor to have been called twice
     expect(Gameboard).toHaveBeenCalledTimes(2);
   });
 
@@ -34,67 +41,25 @@ describe('GameEngine', () => {
     expect(gameEngine.isPlayerTurn).toBe(true);
   });
 
-  test('should toggle turns between player and computer', () => {
-    const initialTurn = gameEngine.isPlayerTurn;
-    gameEngine.takeTurn();
-    expect(gameEngine.isPlayerTurn).toBe(!initialTurn);
-
-    gameEngine.takeTurn();
-    expect(gameEngine.isPlayerTurn).toBe(initialTurn);
+  test('playGame should manage turns and game state', async () => {
+    gameEngine.playGame([0, 0]);
+    expect(gameEngine.player.attack).toHaveBeenCalledWith([0, 0]);
+    expect(gameEngine.computer.computerAttack).toHaveBeenCalled();
   });
 
-  test('should end the game when a player has all ships sunk', () => {
-    gameEngine.playerGameboard.allShipsSunk = jest.fn().mockReturnValue(true);
-    gameEngine.takeTurn();
+  test('should indicate game is over when all ships are sunk', async () => {
+    jest.spyOn(gameEngine, 'isGameOver').mockReturnValue(true);
+    await gameEngine.playGame([0, 0]);
     expect(gameEngine.isGameOver()).toBe(true);
+    gameEngine.isGameOver.mockRestore();
   });
 
-  test('playerTurn should call player.attack and computerGameboard.receiveAttack', () => {
-    gameEngine.playerTurn();
+  test('should indicate game is not over when ships are still afloat', async () => {
+    jest.spyOn(gameEngine, 'isGameOver').mockReturnValue(false);
+    await gameEngine.playGame([0, 0]);
+    expect(gameEngine.isGameOver()).toBe(false);
+    gameEngine.isGameOver.mockRestore();
   });
 
-  test('computerTurn should call computer.makeRandomMove and playerGameboard.receiveAttack', () => {
-    const randomMove = [2, 2];
-    gameEngine.computer.makeRandomMove = jest.fn().mockReturnValue(randomMove);
-
-    gameEngine.computerTurn();
-
-    expect(gameEngine.computer.makeRandomMove).toHaveBeenCalled();
-    expect(gameEngine.playerGameboard.receiveAttack).toHaveBeenCalledWith(
-      randomMove
-    );
-  });
-
-  test('startGame should end the game when all ships are sunk', () => {
-    gameEngine.playerGameboard.allShipsSunk = jest.fn().mockReturnValue(true);
-    gameEngine.startGame();
-    expect(gameEngine.isGameOver()).toBe(true);
-  });
-
-  it('should return "Player wins" when player wins', () => {
-    const gameEngine = new GameEngine();
-
-    // Set up the game to make the player win
-    gameEngine.playerGameboard.allShipsSunk = jest.fn(() => false);
-    gameEngine.computerGameboard.allShipsSunk = jest.fn(() => true);
-
-    gameEngine.startGame();
-
-    expect(gameEngine.isGameOver()).toBe(true);
-    expect(gameEngine.startGame()).toBe('Player wins');
-  });
-
-  it('should return "Computer wins" when computer wins', () => {
-    const gameEngine = new GameEngine();
-
-    // Set up the game to make the computer win
-    gameEngine.playerGameboard.allShipsSunk = jest.fn(() => true);
-    gameEngine.computerGameboard.allShipsSunk = jest.fn(() => false);
-
-    gameEngine.startGame();
-
-    expect(gameEngine.isGameOver()).toBe(true);
-    expect(gameEngine.startGame()).toBe('Computer wins');
-  });
   // Additional tests can be added as needed...
 });

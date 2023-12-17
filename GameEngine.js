@@ -2,15 +2,16 @@ const readline = require('readline');
 const Gameboard = require('./Gameboard');
 const Player = require('./Player');
 const Ship = require('./Ship');
+const SIZE = 2;
 
 class GameEngine {
   constructor() {
-    this.playerDefenseBoard = new Gameboard();
-    this.playerAttackBoard = new Gameboard();
+    this.playerDefenseBoard = new Gameboard(SIZE);
+    this.playerAttackBoard = new Gameboard(SIZE);
     this.isPlayerTurn = true;
     this.gameOver = false;
-    this.player = new Player(this.playerAttackBoard);
-    this.computer = new Player(this.playerDefenseBoard);
+    this.player = new Player(this.playerAttackBoard, SIZE);
+    this.computer = new Player(this.playerDefenseBoard, SIZE);
     this.winner;
   }
 
@@ -27,23 +28,13 @@ class GameEngine {
   };
 
   playerTurn = async () => {
-    console.log('playerTurn');
     const coordinates = await this.getCoordinatesFromPlayer();
-    console.log(
-      '🚀 ~ file: GameEngine.js:47 ~ GameEngine ~ coordinates:',
-      coordinates
-    );
-    console.log('playerTurn coordinates:', coordinates); // Add this line
     this.player.attack(coordinates);
   };
 
   computerTurn = () => {
     console.log('computerTurn');
-    const coordinates = [0, 0]; //this.computer.makeRandomMove();
-    console.log(
-      '🚀 ~ file: GameEngine.js:53 ~ GameEngine ~ coordinates:',
-      coordinates
-    );
+    const coordinates = this.computer.computerAttack();
     this.playerDefenseBoard.receiveAttack(coordinates);
   };
 
@@ -60,19 +51,24 @@ class GameEngine {
   };
 
   playGame = async playerCoordinates => {
+    console.log(
+      '🚀 ~ file: GameEngine.js:64 ~ GameEngine ~ playerCoordinates:',
+      playerCoordinates
+    );
     this.player.attack(playerCoordinates);
+
     if (this.isGameOver()) {
       return this.getGameState();
     }
 
     this.computerTurn();
+
     if (this.isGameOver()) {
       return this.getGameState();
     }
   };
 
   startGame = () => {
-    console.log('start game');
     let ship = new Ship(1);
     this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
     ship = new Ship(1);
