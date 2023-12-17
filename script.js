@@ -76,6 +76,11 @@ async function sendAttack(coordinates) {
 
     const gameState = await response.json();
     console.log('🚀 ~ file: script.js:66 ~ sendAttack ~ gameState:', gameState);
+
+    if (gameState.winner) {
+      disableGameBoards();
+      updateHeaderWithWinner(gameState.winner);
+    }
     return gameState;
   } catch (error) {
     console.error('Error updating game state:', error);
@@ -118,13 +123,15 @@ function renderCheatBoard(data) {
   });
 }
 
-attackButton.addEventListener('click', async () => {
-  const playerCoordinates = getUserInputCoordinates();
-  const updatedGameState = await sendAttack(playerCoordinates);
-  if (updatedGameState) {
-    renderBoard(updatedGameState, 'playerAttackBoard', 'playerAttackBoard');
-    renderBoard(updatedGameState, 'playerDefenseBoard', 'playerDefenseBoard');
-  }
-});
+function disableGameBoards() {
+  const gameboards = document.querySelectorAll('.gameboard');
+  gameboards.forEach(board => {
+    board.classList.add('disabled');
+  });
+}
 
+function updateHeaderWithWinner(winner) {
+  const header = document.querySelector('h1'); // Assuming the page header is an <h1> element
+  header.textContent = `Battleship - ${winner}!`;
+}
 setTimeout(startGame, 1000);
