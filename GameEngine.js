@@ -5,20 +5,20 @@ const Ship = require('./Ship');
 
 class GameEngine {
   constructor() {
-    this.playerGameboard = new Gameboard();
-    this.computerGameboard = new Gameboard();
+    this.playerDefenseBoard = new Gameboard();
+    this.playerAttackBoard = new Gameboard();
     this.isPlayerTurn = true;
     this.gameOver = false;
-    this.player = new Player(this.computerGameboard);
-    this.computer = new Player(this.playerGameboard);
+    this.player = new Player(this.playerAttackBoard);
+    this.computer = new Player(this.playerDefenseBoard);
     this.winner;
   }
   isGameOver = () => {
     return this.gameOver;
   };
   takeTurn = async () => {
-    const playerWins = this.playerGameboard.allShipsSunk(),
-      computerWins = this.computerGameboard.allShipsSunk();
+    const computerWins = this.playerDefenseBoard.allShipsSunk(),
+      playerWins = this.playerAttackBoard.allShipsSunk();
     if (playerWins || computerWins) {
       if (playerWins) {
         this.winner = 'Player wins';
@@ -71,12 +71,12 @@ class GameEngine {
 
   computerTurn = () => {
     console.log('computerTurn');
-    const coordinates = this.computer.makeRandomMove();
+    const coordinates = [0, 0]; //this.computer.makeRandomMove();
     console.log(
       '🚀 ~ file: GameEngine.js:53 ~ GameEngine ~ coordinates:',
       coordinates
     );
-    this.playerGameboard.receiveAttack(coordinates);
+    this.playerDefenseBoard.receiveAttack(coordinates);
   };
 
   playGame = async () => {
@@ -91,8 +91,9 @@ class GameEngine {
   startGame = async () => {
     console.log('start game');
     let ship = new Ship(1);
-    this.playerGameboard.placeShip(ship, [0, 0], 'horizontal');
-    this.computerGameboard.placeShip(ship, [0, 0], 'horizontal');
+    this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
+    ship = new Ship(1);
+    this.playerAttackBoard.placeShip(ship, [0, 0], 'horizontal');
     await this.playGame();
   };
 }
