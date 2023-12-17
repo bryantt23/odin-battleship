@@ -13,7 +13,8 @@ let gameEngine;
 app.post('/start-game', (req, res) => {
   gameEngine = new GameEngine();
   gameEngine.startGame();
-  res.json({ message: 'Game started' });
+  console.log('🚀 ~ file: server.js:16 ~ app.post ~ gameEngine:', gameEngine);
+  res.json({ message: 'Game started', allData: gameEngine });
 });
 
 app.post('/game-state', (req, res) => {

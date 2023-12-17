@@ -85,7 +85,8 @@ class GameEngine {
         gameOver: true,
         winner: this.winner,
         playerBoard: this.playerDefenseBoard.gameboardState(),
-        computerBoard: this.playerAttackBoard.gameboardState()
+        computerBoard: this.playerAttackBoard.gameboardState(),
+        allData: this
       };
     }
 
@@ -101,16 +102,17 @@ class GameEngine {
       gameOver: false,
       winner: this.winner,
       playerBoard: this.playerDefenseBoard.gameboardState(),
-      computerBoard: this.playerAttackBoard.gameboardState()
+      computerBoard: this.playerAttackBoard.gameboardState(),
+      allData: this
     };
   };
 
   startGame = async () => {
     console.log('start game');
-    let ship = new Ship(1);
+    let ship = new Ship(2);
     this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
-    ship = new Ship(1);
-    this.playerAttackBoard.placeShip(ship, [0, 0], 'horizontal');
+    ship = new Ship(2);
+    this.playerAttackBoard.placeShip(ship, [0, 1], 'vertical');
     // await this.playGame();
   };
 }

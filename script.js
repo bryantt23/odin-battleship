@@ -34,16 +34,19 @@ function sendAttack(coordinates) {
     .catch(error => console.error('Error updating game state:', error));
 }
 
-function startGame() {
-  fetch('http://localhost:3000/start-game', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => response.json())
-    .then(data => console.log(data.message))
-    .catch(error => console.error('Error starting the game:', error));
+async function startGame() {
+  try {
+    const res = await fetch('http://localhost:3000/start-game', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    console.log('🚀 ~ file: script.js:46 ~ startGame ~ data:', data);
+  } catch (error) {
+    console.error('Error starting the game:', error);
+  }
 }
 
 // Function to update the UI based on the game state
