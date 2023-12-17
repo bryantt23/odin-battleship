@@ -79,13 +79,30 @@ class GameEngine {
     this.playerDefenseBoard.receiveAttack(coordinates);
   };
 
-  playGame = async () => {
-    if (!this.isGameOver()) {
-      await this.takeTurn();
-      await this.playGame();
-    } else {
-      console.log(`Game over. Winner: ${this.winner}`);
+  playGame = async playerCoordinates => {
+    if (this.isGameOver()) {
+      return {
+        gameOver: true,
+        winner: this.winner,
+        playerBoard: this.playerDefenseBoard.gameboardState(),
+        computerBoard: this.playerAttackBoard.gameboardState()
+      };
     }
+
+    if (this.playerTurn) {
+      await this.player.attack(playerCoordinates);
+    } else {
+      this.computerTurn();
+    }
+
+    this.isPlayerTurn = !this.isPlayerTurn;
+
+    return {
+      gameOver: false,
+      winner: this.winner,
+      playerBoard: this.playerDefenseBoard.gameboardState(),
+      computerBoard: this.playerAttackBoard.gameboardState()
+    };
   };
 
   startGame = async () => {
@@ -94,11 +111,8 @@ class GameEngine {
     this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
     ship = new Ship(1);
     this.playerAttackBoard.placeShip(ship, [0, 0], 'horizontal');
-    await this.playGame();
+    // await this.playGame();
   };
 }
-
-const game = new GameEngine();
-game.startGame();
 
 module.exports = GameEngine;
