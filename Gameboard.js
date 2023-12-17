@@ -1,3 +1,5 @@
+const Ship = require('./Ship');
+
 class Gameboard {
   constructor(SIZE) {
     const matrix = [];
@@ -15,7 +17,7 @@ class Gameboard {
   canPlaceShip = (r, c, shipLength, orientation) => {
     if (orientation === 'horizontal') {
       const shipEnd = c + shipLength;
-      if (shipEnd >= this.size) {
+      if (shipEnd > this.size) {
         return false;
       }
       for (let i = 0; i < shipLength; i++) {
@@ -25,7 +27,7 @@ class Gameboard {
       }
     } else {
       const shipEnd = r + shipLength;
-      if (shipEnd >= this.size) {
+      if (shipEnd > this.size) {
         return false;
       }
       for (let i = 0; i < shipLength; i++) {
@@ -35,6 +37,37 @@ class Gameboard {
       }
     }
     return true;
+  };
+
+  randomlyPlaceShip = shipSize => {
+    const maxAttempts = 100; // Limit the number of attempts to avoid infinite loops
+    let attempts = 0;
+
+    console.log('this', this);
+    while (attempts < maxAttempts) {
+      // Randomly choose orientation
+      const orientation = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+
+      // Randomly choose a starting position
+      let r, c;
+      if (orientation === 'horizontal') {
+        r = Math.floor(Math.random() * this.size);
+        c = Math.floor(Math.random() * (this.size - shipSize + 1));
+      } else {
+        r = Math.floor(Math.random() * (this.size - shipSize + 1));
+        c = Math.floor(Math.random() * this.size);
+      }
+
+      // Attempt to place the ship
+      const ship = new Ship(shipSize); // Assuming you have a Ship class
+      if (this.placeShip(ship, [r, c], orientation)) {
+        return true; // Ship placed successfully
+      }
+
+      attempts++;
+    }
+
+    return false; // Ship placement failed after max attempts
   };
 
   placeShip = (ship, [r, c], orientation) => {

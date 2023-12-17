@@ -163,4 +163,22 @@ describe('Gameboard', () => {
     const state = gameboard.gameboardState();
     expect(state[1][1]).toBe(null);
   });
+
+  test('randomlyPlaceShip should successfully place a ship', () => {
+    const shipSize = 3; // Example ship size
+    const result = gameboard.randomlyPlaceShip(shipSize);
+    expect(result).toBe(true);
+  });
+
+  test('randomlyPlaceShip should not place a ship if there is no room', () => {
+    // Fill the board with ships to ensure no room is left
+    for (let i = 0; i < SIZE; i++) {
+      for (let j = 0; j < SIZE; j++) {
+        gameboard.placeShip(new Ship(1), [i, j], 'horizontal');
+      }
+    }
+    const shipSize = 3;
+    const result = gameboard.randomlyPlaceShip(shipSize);
+    expect(result).toBe(false);
+  });
 });
