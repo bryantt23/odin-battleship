@@ -7,7 +7,27 @@ function getUserInputCoordinates() {
   });
 }
 
-function renderPlayerBoard(data) {
+function renderBoard2(data) {
+  const boardElement = document.getElementById('computerCheatBoard');
+  const { gameboard } = data.allData.playerAttackBoard;
+  gameboard.forEach(row => {
+    row.forEach(cell => {
+      const cellElement = document.createElement('div');
+      cellElement.classList.add('cell');
+      if (cell) {
+        cellElement.classList.add('ship');
+        cellElement.textContent = 'Ship';
+      } else {
+        cellElement.classList.add('sea');
+        cellElement.textContent = 'Sea';
+      }
+      cellElement.classList.add('cell');
+      boardElement.appendChild(cellElement);
+    });
+  });
+}
+
+function renderBoard(data) {
   const boardElement = document.getElementById('playerDefenseBoard');
   const { gameboard } = data.allData.playerDefenseBoard;
   gameboard.forEach(row => {
@@ -67,7 +87,8 @@ async function startGame() {
       }
     });
     const data = await res.json();
-    renderPlayerBoard(data);
+    renderBoard(data);
+    renderBoard2(data);
     console.log('🚀 ~ file: script.js:46 ~ startGame ~ data:', data);
   } catch (error) {
     console.error('Error starting the game:', error);

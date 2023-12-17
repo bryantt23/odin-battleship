@@ -70,7 +70,7 @@ class GameEngine {
   startGame = () => {
     this.playerDefenseBoard.randomlyPlaceShip(2);
     this.playerDefenseBoard.randomlyPlaceShip(1);
-    this.playerAttackBoard.randomlyPlaceShip(1);
+    this.playerAttackBoard.randomlyPlaceShip(2);
     this.playerAttackBoard.randomlyPlaceShip(1);
   };
 }

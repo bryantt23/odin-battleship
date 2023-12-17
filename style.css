@@ -21,3 +21,9 @@
 .ship {
   background-color: grey;
 }
+
+#computerCheatBoard {
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
