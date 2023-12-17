@@ -53,11 +53,15 @@ while(this.computerGameboard.hasBeenAttacked(r, c)){
     this.playerGameboard.receiveAttack(coordinates);
   };
   startGame = () => {
+    console.log('start game');
     while (!this.isGameOver()) {
       this.takeTurn();
     }
     return this.winner;
   };
 }
+
+const game = new GameEngine();
+game.startGame();
 
 module.exports = GameEngine;
