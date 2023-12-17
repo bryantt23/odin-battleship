@@ -1,12 +1,3 @@
-const attackButton = document.querySelector('#attackButton'),
-  coordinatesElement = document.querySelector('#coordinates');
-
-function getUserInputCoordinates() {
-  return coordinatesElement.value
-    .split(',')
-    .map(num => parseInt(num.trim(), 10));
-}
-
 function renderBoard(data, boardId, boardType) {
   const boardElement = document.getElementById(boardId);
   boardElement.innerHTML = '';
@@ -18,52 +9,82 @@ function renderBoard(data, boardId, boardType) {
       cellElement.classList.add('cell');
 
       if (boardType === 'playerAttackBoard') {
-        if (alreadyAttacked[rowIndex][colIndex]) {
-          const isMiss = missedAttacks.some(
-            miss => miss[0] === rowIndex && miss[1] === colIndex
-          );
-          cellElement.classList.add(isMiss ? 'miss' : 'hit');
-          cellElement.textContent = isMiss ? 'MISS' : 'HIT';
-        } else {
-          cellElement.classList.add('sea');
-          cellElement.textContent = 'SEA';
-          cellElement.addEventListener('click', async () => {
-            const updatedGameState = await sendAttack([rowIndex, colIndex]);
-            if (updatedGameState) {
-              renderBoard(
-                updatedGameState,
-                'playerAttackBoard',
-                'playerAttackBoard'
-              );
-              renderBoard(
-                updatedGameState,
-                'playerDefenseBoard',
-                'playerDefenseBoard'
-              );
-            }
-          });
-        }
-      } else if (boardType === 'playerDefenseBoard') {
-        const isMiss = missedAttacks.some(
-          miss => miss[0] === rowIndex && miss[1] === colIndex
+        handlePlayerAttackBoard(
+          cellElement,
+          alreadyAttacked,
+          missedAttacks,
+          rowIndex,
+          colIndex
         );
-        const isHit = alreadyAttacked[rowIndex][colIndex] && cell !== null;
-
-        if (isHit) {
-          cellElement.classList.add('hit');
-          cellElement.textContent = 'HIT';
-        } else if (isMiss) {
-          cellElement.classList.add('miss');
-          cellElement.textContent = 'MISS';
-        } else {
-          cellElement.classList.add(cell ? 'ship' : 'sea');
-          cellElement.textContent = cell ? 'SHIP' : 'SEA';
-        }
+      } else if (boardType === 'playerDefenseBoard') {
+        handlePlayerDefenseBoard(
+          cellElement,
+          cell,
+          alreadyAttacked,
+          missedAttacks,
+          rowIndex,
+          colIndex
+        );
       }
 
       boardElement.appendChild(cellElement);
     });
   });
+}
+
+function handlePlayerAttackBoard(
+  cellElement,
+  alreadyAttacked,
+  missedAttacks,
+  rowIndex,
+  colIndex
+) {
+  if (alreadyAttacked[rowIndex][colIndex]) {
+    const isMiss = missedAttacks.some(
+      miss => miss[0] === rowIndex && miss[1] === colIndex
+    );
+    cellElement.classList.add(isMiss ? 'miss' : 'hit');
+    cellElement.textContent = isMiss ? 'MISS' : 'HIT';
+  } else {
+    cellElement.classList.add('sea');
+    cellElement.textContent = 'SEA';
+    cellElement.addEventListener('click', async () => {
+      const updatedGameState = await sendAttack([rowIndex, colIndex]);
+      if (updatedGameState) {
+        renderBoard(updatedGameState, 'playerAttackBoard', 'playerAttackBoard');
+        renderBoard(
+          updatedGameState,
+          'playerDefenseBoard',
+          'playerDefenseBoard'
+        );
+      }
+    });
+  }
+}
+
+function handlePlayerDefenseBoard(
+  cellElement,
+  cell,
+  alreadyAttacked,
+  missedAttacks,
+  rowIndex,
+  colIndex
+) {
+  const isMiss = missedAttacks.some(
+    miss => miss[0] === rowIndex && miss[1] === colIndex
+  );
+  const isHit = alreadyAttacked[rowIndex][colIndex] && cell !== null;
+
+  if (isHit) {
+    cellElement.classList.add('hit');
+    cellElement.textContent = 'HIT';
+  } else if (isMiss) {
+    cellElement.classList.add('miss');
+    cellElement.textContent = 'MISS';
+  } else {
+    cellElement.classList.add(cell ? 'ship' : 'sea');
+    cellElement.textContent = cell ? 'SHIP' : 'SEA';
+  }
 }
 
 async function sendAttack(coordinates) {
@@ -75,8 +96,6 @@ async function sendAttack(coordinates) {
     });
 
     const gameState = await response.json();
-    console.log('🚀 ~ file: script.js:66 ~ sendAttack ~ gameState:', gameState);
-
     if (gameState.winner) {
       disableGameBoards();
       updateHeaderWithWinner(gameState.winner);
@@ -94,7 +113,6 @@ async function startGame() {
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await res.json();
-    console.log('🚀 ~ file: script.js:78 ~ startGame ~ data:', data);
     renderBoard(data, 'playerDefenseBoard', 'playerDefenseBoard');
     renderBoard(data, 'playerAttackBoard', 'playerAttackBoard');
     renderCheatBoard(data);
@@ -110,14 +128,8 @@ function renderCheatBoard(data) {
     row.forEach(cell => {
       const cellElement = document.createElement('div');
       cellElement.classList.add('cell');
-      if (cell) {
-        cellElement.classList.add('ship');
-        cellElement.textContent = 'Ship';
-      } else {
-        cellElement.classList.add('sea');
-        cellElement.textContent = 'Sea';
-      }
-      cellElement.classList.add('cell');
+      cellElement.classList.add(cell ? 'ship' : 'sea');
+      cellElement.textContent = cell ? 'Ship' : 'Sea';
       boardElement.appendChild(cellElement);
     });
   });
@@ -125,13 +137,12 @@ function renderCheatBoard(data) {
 
 function disableGameBoards() {
   const gameboards = document.querySelectorAll('.gameboard');
-  gameboards.forEach(board => {
-    board.classList.add('disabled');
-  });
+  gameboards.forEach(board => board.classList.add('disabled'));
 }
 
 function updateHeaderWithWinner(winner) {
-  const header = document.querySelector('h1'); // Assuming the page header is an <h1> element
+  const header = document.querySelector('h1');
   header.textContent = `Battleship - ${winner}!`;
 }
+
 setTimeout(startGame, 1000);
