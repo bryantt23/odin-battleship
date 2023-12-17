@@ -14,9 +14,6 @@ class GameEngine {
     this.winner;
   }
   isGameOver = () => {
-    return this.gameOver;
-  };
-  takeTurn = async () => {
     const computerWins = this.playerDefenseBoard.allShipsSunk(),
       playerWins = this.playerAttackBoard.allShipsSunk();
     if (playerWins || computerWins) {
@@ -26,38 +23,10 @@ class GameEngine {
         this.winner = 'Computer wins';
       }
       this.gameOver = true;
-      return;
     }
-    if (this.isPlayerTurn) {
-      await this.playerTurn();
-    } else {
-      this.computerTurn();
-    }
-    this.isPlayerTurn = !this.isPlayerTurn;
+    return this.gameOver;
   };
-  getCoordinatesFromPlayer = () => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    console.log('getCoordinatesFromPlayer');
 
-    return new Promise(resolve => {
-      rl.question('Enter coordinates (row, column): ', answer => {
-        // Convert input to coordinates
-        const [r, c] = answer.split(',').map(num => parseInt(num.trim()));
-        rl.close();
-
-        // Validate coordinates (you can add more validation as needed)
-        if (!isNaN(r) && !isNaN(c)) {
-          resolve([r, c]);
-        } else {
-          console.log('Invalid input, try again.');
-          resolve(this.getCoordinatesFromPlayer());
-        }
-      });
-    });
-  };
   playerTurn = async () => {
     console.log('playerTurn');
     const coordinates = await this.getCoordinatesFromPlayer();
@@ -80,40 +49,54 @@ class GameEngine {
   };
 
   playGame = async playerCoordinates => {
-    if (this.isGameOver()) {
-      return {
-        gameOver: true,
+    return new Promise((resolve, reject) => {
+      this.player.attack(playerCoordinates);
+      if (this.isGameOver()) {
+        resolve({
+          gameOver: true,
+          winner: this.winner,
+          playerBoard: this.playerDefenseBoard.gameboardState(),
+
+          computerBoard: this.playerAttackBoard.gameboardState(),
+          playerDefenseBoardMissedAttacks:
+            this.playerDefenseBoard.missedAttacks,
+          playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
+          allData: this
+        });
+      }
+
+      this.computerTurn();
+      if (this.isGameOver()) {
+        resolve({
+          gameOver: true,
+          winner: this.winner,
+          playerBoard: this.playerDefenseBoard.gameboardState(),
+          computerBoard: this.playerAttackBoard.gameboardState(),
+          playerDefenseBoardMissedAttacks:
+            this.playerDefenseBoard.missedAttacks,
+          playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
+          allData: this
+        });
+      }
+
+      resolve({
+        gameOver: false,
         winner: this.winner,
         playerBoard: this.playerDefenseBoard.gameboardState(),
         computerBoard: this.playerAttackBoard.gameboardState(),
+        playerDefenseBoardMissedAttacks: this.playerDefenseBoard.missedAttacks,
+        playerAttackBoardMissedAttacks: this.playerAttackBoard.missedAttacks,
         allData: this
-      };
-    }
-
-    if (this.playerTurn) {
-      await this.player.attack(playerCoordinates);
-    } else {
-      this.computerTurn();
-    }
-
-    this.isPlayerTurn = !this.isPlayerTurn;
-
-    return {
-      gameOver: false,
-      winner: this.winner,
-      playerBoard: this.playerDefenseBoard.gameboardState(),
-      computerBoard: this.playerAttackBoard.gameboardState(),
-      allData: this
-    };
+      });
+    });
   };
 
   startGame = async () => {
     console.log('start game');
-    let ship = new Ship(2);
+    let ship = new Ship(1);
     this.playerDefenseBoard.placeShip(ship, [0, 0], 'horizontal');
-    ship = new Ship(2);
+    ship = new Ship(1);
     this.playerAttackBoard.placeShip(ship, [0, 1], 'vertical');
-    // await this.playGame();
   };
 }
 

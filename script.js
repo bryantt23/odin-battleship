@@ -18,6 +18,10 @@ attackButton.addEventListener('click', async () => {
 });
 
 function sendAttack(coordinates) {
+  console.log(
+    '🚀 ~ file: script.js:21 ~ sendAttack ~ coordinates:',
+    coordinates
+  );
   fetch('http://localhost:3000/game-state', {
     method: 'POST',
     headers: {
