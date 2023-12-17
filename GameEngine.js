@@ -27,17 +27,11 @@ class GameEngine {
   };
 
   playerTurn = async coordinates => {
-    console.log('player turn');
     this.player.attack(coordinates);
   };
 
   computerTurn = () => {
-    console.log('computer turn');
-    const coordinates = this.computer.computerAttack();
-    console.log(
-      '🚀 ~ file: GameEngine.js:37 ~ GameEngine ~ coordinates:',
-      coordinates
-    );
+    this.computer.computerAttack();
   };
 
   getGameState = () => {
@@ -66,7 +60,6 @@ class GameEngine {
   };
 
   startGame = () => {
-    console.log('starting');
     this.playerDefenseBoard.randomlyPlaceShip(1);
     this.playerDefenseBoard.randomlyPlaceShip(2);
     this.playerAttackBoard.randomlyPlaceShip(1);
